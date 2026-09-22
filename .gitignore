@@ -1,0 +1,20 @@
+# CMake build trees (also stale caches copied from other machines)
+build/
+
+# Data and plots produced by the labs -- regenerate by rerunning the tests
+full_*.csv
+steps_*.csv
+sweep_*.csv
+manual_*.csv
+trajectory_*.csv
+motor_characterization*.csv
+*.png
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# colcon workspace artifacts
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
