@@ -59,8 +59,7 @@ ros2 run me130_pendulum freq_response.py
 ```
 
 Rod **hanging down**. Writes `sweep_<timestamp>.csv`. The Bode plot overlays
-the model identified from the newest `steps_*.csv` — so the steps predict the
-curve and the sweep measures it, independently.
+the model identified from the newest `steps_*.csv`.
 
 Hold time per frequency is `skip_s + cycles/f`, so low frequencies are driven
 longer. Keep `skip_s` equal to `SKIP_S` in `freq_response.py`.
