@@ -2,8 +2,6 @@
 
 ROS 2 Jazzy. The control code is C++; the analysis is Python.
 
-Each node owns a disjoint slice of the hardware, so they never contend:
-
 | node | hardware |
 |---|---|
 | `motor_node` | PWM ch0 (GPIO18), DIR GPIO25, PS GPIO24 |
@@ -11,14 +9,77 @@ Each node owns a disjoint slice of the hardware, so they never contend:
 | `imu_node` | `/dev/i2c-1` |
 
 `motor_node` is the only node that moves the motor.
-## Build
+## Git Fork, Clone & Build
 
+### 1. Configure Git
+
+Run once on your Raspberry Pi:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"
+```
+
+Use an email associated with your GitHub account.
+
+### 2. Fork the Repository
+
+1. Log in to your GitHub account.
+2. Open the [ME130 Lab repository](https://github.com/siddharthbhurat4/me130_lab).
+3. Click **Fork** → **Create fork**.
+
+This creates your own copy of the repository under your GitHub account.
+
+### 3. Clone Your Fork
+
+Replace `YOUR_USERNAME` with your GitHub username:
+```
+git clone https://github.com/YOUR_USERNAME/me130_lab.git
+```
 ```bash
 source /opt/ros/jazzy/setup.bash
 cd ~/me130_lab/ros2_ws
 colcon build
 source install/setup.bash
 ```
+
+
+### 4. Add the Course Repository
+
+Run once:
+
+```bash
+git remote add upstream https://github.com/siddharthbhurat4/me130_lab.git
+```
+
+Verify:
+
+```bash
+git remote -v
+```
+
+* `origin` → your fork
+* `upstream` → course repository
+
+### 5. Save Your Work
+
+```bash
+git add .
+git commit -m "Describe your changes"
+git push origin main
+```
+
+### 6. Get Course Updates
+
+When updates are released:
+
+```bash
+git fetch upstream
+git merge upstream/main
+git push origin main
+```
+
+If Git reports a merge conflict, resolve the conflict before continuing.
 
 ## The four labs
 
@@ -29,9 +90,7 @@ ros2 launch me130_pendulum motor_characterization.launch.py
 ros2 run me130_pendulum plot_characterization.py
 ```
 
-**Detach the pendulum first.** The shaft sweeps to full duty both ways. Prints
-the mean breakaway, stop and deadband, and writes
-`motor_characterization.csv`. `deadband` is 0.0 here on purpose — this lab
+**Detach the pendulum first.** `deadband` is 0.0 here on purpose — this lab
 *measures* the deadband, so the motor must be driven raw.
 
 The number it prints is the `deadband:=` argument for labs 2, 3 and 4.
@@ -43,13 +102,7 @@ ros2 launch me130_pendulum step_response.launch.py deadband:=0.065
 ros2 run me130_pendulum step_response.py
 ```
 
-Rod **hanging down**. Each duty is held, then released so the rod rings down:
-every segment gives a forced response followed by a free response. Writes
-`steps_<timestamp>.csv`. The script plots both and identifies
-
-    theta'' + c*theta' + a*theta = b*u
-
-Raise `rest_s:=5.0` if the rod is still moving when the next step begins.
+Rod **hanging down**. Writes steps_<timestamp>.csv.
 
 ### 3. Frequency response
 
@@ -58,9 +111,7 @@ ros2 launch me130_pendulum frequency_response.launch.py deadband:=0.065
 ros2 run me130_pendulum freq_response.py
 ```
 
-Rod **hanging down**. Writes `sweep_<timestamp>.csv`. The Bode plot overlays
-the model identified from the newest `steps_*.csv`.
-
+Rod **hanging down**. Writes `sweep_<timestamp>.csv`.
 Hold time per frequency is `skip_s + cycles/f`, so low frequencies are driven
 longer. Keep `skip_s` equal to `SKIP_S` in `freq_response.py`.
 
@@ -73,7 +124,7 @@ ros2 launch me130_pendulum balance.launch.py deadband:=0.065
 **The gains default to zero, so this does nothing until you set them.** That
 is the lab.
 
-Open a SECOND terminal and run the console:
+Open a SECOND terminal and run:
 
 ```bash
 ros2 run me130_pendulum keyboard_node
@@ -85,8 +136,6 @@ ros2 run me130_pendulum keyboard_node
   p<Kp>  d<Kd>  i<Ki>  w<integral limit>      e.g.  p10.0<Enter>
   f<deadband>
 ```
-
-Add `log:=true` to record a `balance_*.csv`.
 
 ## Model conventions
 
